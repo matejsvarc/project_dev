@@ -1,5 +1,8 @@
 <?php
+
 require '../include/database.php';
+require 'navbar.php';
+
 ?>
 
 <!DOCTYPE html>
@@ -8,11 +11,13 @@ require '../include/database.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dev Project</title>
+    <title>Document</title>
 </head>
+<?php
+?>
 
 <body>
-    kundo
+
 </body>
 
 </html>
