@@ -1,5 +1,5 @@
 <?php
-require '../include/database.php';
+require '../../include/database.php';
 ?>
 
 <!DOCTYPE html>
@@ -8,7 +8,6 @@ require '../include/database.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dev Project</title>
 </head>
 
 <body class="bg-gray-100">
@@ -29,7 +28,7 @@ require '../include/database.php';
                 </div>
                 <div>
                     <input type="submit" value="Create User" class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 cursor-pointer transition duration-300 ease-in-out">
-                    <a href="index.php" class="inline-block mt-4 w-full text-center bg-gray-200 text-gray-700 p-2 rounded-md hover:bg-gray-300 cursor-pointer transition duration-300 ease-in-out">Zpět</a>
+                    <a href="../index.php" class="inline-block mt-4 w-full text-center bg-gray-200 text-gray-700 p-2 rounded-md hover:bg-gray-300 cursor-pointer transition duration-300 ease-in-out">Zpět</a>
                     <a href="logAcc.php">Již máte účet ? Přihlašte se zde!</a>
                 </div>
             </form>
