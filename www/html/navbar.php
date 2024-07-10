@@ -12,8 +12,8 @@ $user = isset($_SESSION['username']) ? $_SESSION['username'] : false;
         <?php if ($user) : ?>
             <span class="mr-4">Vítejte, <?php echo htmlspecialchars($user); ?></span>
         <?php else : ?>
-            <a href="logAcc.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Přihlašte se</a>
+            <a href="/accManagment/logAcc.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Přihlašte se</a>
         <?php endif; ?>
-        <a href="outAcc.php" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Odhlásit se</a>
+        <a href="./accManagment/outAcc.php" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Odhlásit se</a>
     </div>
 </nav>

@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $row['password'])) {
             // Přihlášení úspěšné, nastavení session
             $_SESSION['username'] = $username;
-            header("Location: index.php"); // Přesměrování na hlavní stránku
+            header("Location: ../index.php"); // Přesměrování na hlavní stránku
             exit;
         } else {
             $error = "Nesprávné uživatelské jméno nebo heslo";
