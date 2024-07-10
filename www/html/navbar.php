@@ -1,6 +1,6 @@
 <?php
+
 // Předpokládejme, že máte session start nebo nějakou logiku pro ověření přihlášeného uživatele
-// session_start();
 $user = isset($_SESSION['username']) ? $_SESSION['username'] : false;
 ?>
 <!DOCTYPE html>
@@ -10,36 +10,36 @@ $user = isset($_SESSION['username']) ? $_SESSION['username'] : false;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/styling.scss"">
+    <link rel="stylesheet" href="../css/styling.scss">
 
-    <title>Document</title>
+    <title>dev_project</title>
 
 </head>
 
 <body>
-    <nav class=" bg-gray-800 p-4 text-white flex justify-between items-center">
-    <div class="flex items-center">
-        <a href="index.php" class="text-xl font-bold">Název Webu</a>
-    </div>
-    <div>
-        <?php if ($user) : ?>
-            <span class="mr-4">Vítejte, <?php echo htmlspecialchars($user); ?></span>
-            <a href="./accManagment/outAcc.php">
-                <button class="Btn">
-
-                    <div class="sign"><svg viewBox="0 0 512 512">
-                            <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
-                        </svg></div>
-
-                    <div class="text">Logout</div>
-                </button>
-            </a>
-
-        <?php else : ?>
-            <a href="./accManagment/logAcc.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Přihlašte se</a>
-        <?php endif; ?>
-    </div>
+    <nav class="bg-gray-800 p-4 text-white flex justify-between items-center">
+        <div class="flex items-center">
+            <a href="index.php" class="text-xl font-bold">dev project</a>
+        </div>
+        <div>
+            <?php if ($user) : ?>
+                <?php if ($user == 'admin') : ?>
+                    <!-- Pro admina zobrazit speciální odkaz na admin sekci -->
+                    Vítejte, <a href="./admin/overview.php" class="mr-4 bg-blue-500 hover:bg-blue-800 text-white font-bold "><button> <?php echo htmlspecialchars($user); ?></button></a>
+                <?php else : ?>
+                    <!-- Pro běžné uživatele zobrazit jen text -->
+                    <span class="mr-4">Vítejte, <?php echo htmlspecialchars($user); ?></span>
+                <?php endif; ?>
+                <a href="./accManagment/outAcc.php">
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded-full transition duration-200 ease-in-out hover:bg-blue-800 active:bg-blue-900 focus:outline-none">
+                        Logout
+                    </button>
+                </a>
+            <?php else : ?>
+                <a href="./accManagment/logAcc.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Přihlašte se</a>
+            <?php endif; ?>
+        </div>
     </nav>
-    </body>
+</body>
 
 </html>

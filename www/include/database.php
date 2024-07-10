@@ -6,10 +6,9 @@ $username = "admin"; // Vaše uživatelské jméno
 $password = "heslo"; // Vaše heslo
 $database = "eshop"; // Název vaší databáze
 
-$mysqli = new mysqli($servername, $username, $password, $database); {
-    if ($mysqli->connect_error) {
-        die("Connection failed: " . $mysqli->connect_error);
-    }
+$mysqli = new mysqli($servername, $username, $password, $database);
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
 }
 
 // Handle form submission
@@ -18,13 +17,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $role = "uzivatel"; // Přednastavená role pro nové uživatele
 
     // Hash the password
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     // Prepare and execute SQL query
-    $stmt = $mysqli->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $username, $email, $hashed_password);
+    $stmt = $mysqli->prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssss", $username, $email, $hashed_password, $role);
 
     if ($stmt->execute()) {
         echo "User created successfully.";
@@ -35,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Close statement
     $stmt->close();
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

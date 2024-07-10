@@ -29,7 +29,7 @@ require '../../include/database.php';
                 <div>
                     <input type="submit" value="Create User" class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 cursor-pointer transition duration-300 ease-in-out">
                     <a href="../index.php" class="inline-block mt-4 w-full text-center bg-gray-200 text-gray-700 p-2 rounded-md hover:bg-gray-300 cursor-pointer transition duration-300 ease-in-out">Zpět</a>
-                    <a href="logAcc.php">Již máte účet ? Přihlašte se zde!</a>
+                    <a class="block mt-4 text-blue-500 hover:underline" href="logAcc.php">Již máte účet ? Přihlašte se zde!</a>
                 </div>
             </form>
         </div>

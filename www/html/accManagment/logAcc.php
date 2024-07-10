@@ -1,16 +1,15 @@
 <?php
-session_start();
-
 // Připojení k databázi
 $servername = "database"; // Opraveno na název hostitele služby MySQL
 $username = "admin"; // Vaše uživatelské jméno
 $password = "heslo"; // Vaše heslo
 $database = "eshop"; // Název vaší databáze
 
-$mysqli = new mysqli($servername, $username, $password, $database); {
-    if ($mysqli->connect_error) {
-        die("Connection failed: " . $mysqli->connect_error);
-    }
+session_start(); // Zajištění, že session je spuštěna
+
+$mysqli = new mysqli($servername, $username, $password, $database);
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -18,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $mysqli->real_escape_string($_POST['password']);
 
     // Ověření uživatele
-    $sql = "SELECT * FROM users WHERE username = '$username'"; // Předpokládáme, že tabulka se jmenuje 'users'
+    $sql = "SELECT username, password, role FROM users WHERE username = '$username'"; // Přidáno získání role
     $result = $mysqli->query($sql);
 
     if ($result->num_rows > 0) {
@@ -26,7 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Předpokládáme, že hesla jsou hashovaná
         if (password_verify($password, $row['password'])) {
             // Přihlášení úspěšné, nastavení session
-            $_SESSION['username'] = $username;
+            $_SESSION['username'] = $row['username']; // Uložení skutečného uživatelského jména z DB
+            $_SESSION['role'] = $row['role']; // Uložení role uživatele do session
             header("Location: ../index.php"); // Přesměrování na hlavní stránku
             exit;
         } else {
