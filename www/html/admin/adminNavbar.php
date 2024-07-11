@@ -1,15 +1,18 @@
 <?php
-require '/var/www/include/database.php'; // Use absolute path
-// Check if the user is logged in and is an admin
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+// Check if user is logged in and get their username and role
 $user = isset($_SESSION['username']) ? $_SESSION['username'] : false;
 $role = isset($_SESSION['role']) ? $_SESSION['role'] : false;
 
+// Redirect non-admin users to the home page or login page
 if ($role !== 'admin') {
-    // Redirect non-admin users to the home page or login page
     header('Location: ../index.php');
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -29,8 +32,9 @@ if ($role !== 'admin') {
         <div>
             <?php if ($user) : ?>
                 <span class="mr-4">Vítejte, <?php echo htmlspecialchars($user); ?></span>
+                <a href="../index.php" class="bg-blue-500 text-white font-bold px-4 py-2 rounded-full transition duration-200 ease-in-out hover:bg-blue-800 active:bg-blue-900 focus:outline-none">Zpět</a>
                 <a href="../accManagment/outAcc.php">
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded-full transition duration-200 ease-in-out hover:bg-blue-800 active:bg-blue-900 focus:outline-none">
+                    <button class="bg-blue-500 text-white font-bold px-4 py-2 rounded-full transition duration-200 ease-in-out hover:bg-blue-800 active:bg-blue-900 focus:outline-none">
                         Logout
                     </button>
                 </a>
