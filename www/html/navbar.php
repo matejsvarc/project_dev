@@ -1,5 +1,6 @@
 <?php
 
+require '../include/database.php';
 // Předpokládejme, že máte session start nebo nějakou logiku pro ověření přihlášeného uživatele
 $user = isset($_SESSION['username']) ? $_SESSION['username'] : false;
 ?>
@@ -16,6 +17,7 @@ $user = isset($_SESSION['username']) ? $_SESSION['username'] : false;
 
 </head>
 
+
 <body>
     <nav class="bg-gray-800 p-4 text-white flex justify-between items-center">
         <div class="flex items-center">
@@ -25,7 +27,7 @@ $user = isset($_SESSION['username']) ? $_SESSION['username'] : false;
             <?php if ($user) : ?>
                 <?php if ($user == 'admin') : ?>
                     <!-- Pro admina zobrazit speciální odkaz na admin sekci -->
-                    Vítejte, <a href="./admin/overview.php" class="mr-4 bg-blue-500 hover:bg-blue-800 text-white font-bold "><button> <?php echo htmlspecialchars($user); ?></button></a>
+                    Vítejte, <a href="./admin/admin.php" class="hover:text-blue-400"><button> <?php echo htmlspecialchars($user); ?></button></a>
                 <?php else : ?>
                     <!-- Pro běžné uživatele zobrazit jen text -->
                     <span class="mr-4">Vítejte, <?php echo htmlspecialchars($user); ?></span>

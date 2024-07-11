@@ -1,5 +1,28 @@
 <?php
 require '../../include/database.php';
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve form data
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $role = "uzivatel"; // Přednastavená role pro nové uživatele
+
+    // Hash the password
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+    // Prepare and execute SQL query
+    $stmt = $mysqli->prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssss", $username, $email, $hashed_password, $role);
+
+    if ($stmt->execute()) {
+        echo "User created successfully.";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    // Close statement
+    $stmt->close();
+}
 ?>
 
 <!DOCTYPE html>
@@ -8,6 +31,7 @@ require '../../include/database.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-gray-100">

@@ -1,40 +1,34 @@
 <?php
-// Připojení k databázi
-$servername = "database"; // Opraveno na název hostitele služby MySQL
-$username = "admin"; // Vaše uživatelské jméno
-$password = "heslo"; // Vaše heslo
-$database = "eshop"; // Název vaší databáze
-
-session_start(); // Zajištění, že session je spuštěna
-
-$mysqli = new mysqli($servername, $username, $password, $database);
-if ($mysqli->connect_error) {
-    die("Connection failed: " . $mysqli->connect_error);
+ob_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
+
+require '../../include/database.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $mysqli->real_escape_string($_POST['username']);
     $password = $mysqli->real_escape_string($_POST['password']);
 
     // Ověření uživatele
-    $sql = "SELECT username, password, role FROM users WHERE username = '$username'"; // Přidáno získání role
-    $result = $mysqli->query($sql);
+    $sql = "SELECT id, username, password, role FROM users WHERE username = ?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        // Předpokládáme, že hesla jsou hashovaná
-        if (password_verify($password, $row['password'])) {
-            // Přihlášení úspěšné, nastavení session
-            $_SESSION['username'] = $row['username']; // Uložení skutečného uživatelského jména z DB
-            $_SESSION['role'] = $row['role']; // Uložení role uživatele do session
-            header("Location: ../index.php"); // Přesměrování na hlavní stránku
-            exit;
-        } else {
-            $error = "Nesprávné uživatelské jméno nebo heslo";
-        }
+    if ($user && password_verify($password, $user['password'])) {
+        // Přihlášení úspěšné, nastavení session
+        $_SESSION['id'] = $user['id']; // Uložení skutečného ID uživatele z DB
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['role'] = $user['role']; // Uložení role uživatele do session
+        header("Location: ../index.php"); // Přesměrování na hlavní stránku
+        exit;
     } else {
         $error = "Nesprávné uživatelské jméno nebo heslo";
     }
+    $stmt->close();
     $mysqli->close();
 }
 ?>
