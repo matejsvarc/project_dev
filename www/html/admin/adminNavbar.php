@@ -25,11 +25,14 @@ if ($role !== 'admin') {
 </head>
 
 <body>
-    <nav class="bg-gray-800 p-4 text-white flex justify-between items-center">
-        <div class="flex items-center">
-            <a href="admin.php" class="text-xl font-bold">Admin Dashboard</a>
+    <nav class="bg-gray-800 p-4 text-white flex justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-6">
+            <a href="admin.php" class="text-xl font-bold flex items-center hover:text-blue-400 transition duration-200">
+                Admin Dashboard
+            </a>
+            <a href="productAdd.php" class="hover:text-blue-400 transition duration-200 text-lg">Přidání produktu</a>
         </div>
-        <div>
+        <div class="flex items-center space-x-4">
             <?php if ($user) : ?>
                 <span class="mr-4">Vítejte, <?php echo htmlspecialchars($user); ?></span>
                 <a href="../index.php" class="bg-blue-500 text-white font-bold px-4 py-2 rounded-full transition duration-200 ease-in-out hover:bg-blue-800 active:bg-blue-900 focus:outline-none">Zpět</a>
