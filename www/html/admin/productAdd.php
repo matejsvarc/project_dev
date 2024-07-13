@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if ($uploadOk == 1 && !empty($img)) {
-        $sql = "INSERT INTO product (name, quantity, description, img, price) VALUES ('$name', '$quantity', '$description', '$img', '$price')";
+        $sql = "INSERT INTO product (name, quantity, description, img, price, popularity) VALUES ('$name', '$quantity', '$description', '$img', '$price', 0)";
 
         if ($mysqli->query($sql) === TRUE) {
             $message = "Product added successfully";
@@ -100,28 +100,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php echo $message; ?>
             </div>
         <?php endif; ?>
-        <form action="productAdd.php" method="post" enctype="multipart/form-data">
-            <div class="mb-4">
+        <form action="productAdd.php" method="post" enctype="multipart/form-data" class="grid grid-cols-1 gap-4 md:grid-cols-5">
+            <div class="col-span-1">
                 <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
                 <input type="text" name="name" id="name" required class="mt-1 p-2 w-full border rounded-md">
             </div>
-            <div class="mb-4">
+            <div class="col-span-1">
                 <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
                 <input type="number" name="quantity" id="quantity" required class="mt-1 p-2 w-full border rounded-md">
             </div>
-            <div class="mb-4">
+            <div class="col-span-1">
                 <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
                 <textarea name="description" id="description" required class="mt-1 p-2 w-full border rounded-md"></textarea>
             </div>
-            <div class="mb-4">
+            <div class="col-span-1">
                 <label for="img" class="block text-sm font-medium text-gray-700">Image</label>
                 <input type="file" name="img" id="img" required class="mt-1 p-2 w-full border rounded-md">
             </div>
-            <div class="mb-4">
+            <div class="col-span-1">
                 <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
                 <input type="number" name="price" id="price" required class="mt-1 p-2 w-full border rounded-md">
             </div>
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200">Add Product</button>
+            <div class="col-span-1 md:col-span-5 flex justify-end mt-4 md:mt-0">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200">Add Product</button>
+            </div>
         </form>
     </div>
 </body>
