@@ -54,48 +54,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
+    <title>Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
 <body>
-
-    <div class="container mx-auto">
-        <h1 class="text-2xl font-bold mt-4 mb-8 text-center">Admin Dashboard - Users</h1>
-
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white border border-gray-200">
-                <thead class="bg-gray-800 text-white">
-                    <tr>
-                        <th class="py-2 px-4 text-center">ID</th>
-                        <th class="py-2 px-4 text-center">Username</th>
-                        <th class="py-2 px-4 text-center">Role</th>
-                        <th class="py-2 px-4 text-center">Change Role</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($users as $user) : ?>
-                        <tr>
-                            <td class="py-2 px-4 text-center"><?php echo htmlspecialchars($user['id']); ?></td>
-                            <td class="py-2 px-4 text-center"><?php echo htmlspecialchars($user['username']); ?></td>
-                            <td class="py-2 px-4 text-center"><?php echo htmlspecialchars($user['role']); ?></td>
-                            <td class="py-2 px-4 text-center">
-                                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                                    <input type="hidden" name="userId" value="<?php echo htmlspecialchars($user['id']); ?>">
-                                    <select name="newRole" class="py-1 px-2 border border-gray-300 rounded">
-                                        <option value="uzivatel" <?php echo ($user['role'] === 'uzivatel') ? 'selected' : ''; ?>>uzivatel</option>
-                                        <option value="admin" <?php echo ($user['role'] === 'admin') ? 'selected' : ''; ?>>admin</option>
-                                    </select>
-                                    <button type="submit" name="changeRole" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded">Change</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+    <div class="container mx-auto mt-10">
+        <h2 class="text-2xl mb-4">Admin Dashboard</h2>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="border p-4 rounded-lg text-center">
+                <a href="productAdd.php" class="text-xl font-bold">Adding Product</a>
+            </div>
+            <div class="border p-4 rounded-lg text-center">
+                <a href="editProducts.php" class="text-xl font-bold">Editing Products</a>
+            </div>
+            <div class="col-span-2 border p-4 rounded-lg text-center">
+                <a href="overview.php" class="text-xl font-bold">Overview/Popularity</a>
+            </div>
         </div>
     </div>
-
 </body>
 
 </html>

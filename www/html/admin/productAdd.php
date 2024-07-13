@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Check if the user is logged in and is an admin
 $user = isset($_SESSION['username']) ? $_SESSION['username'] : false;
@@ -22,58 +24,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $price = (int)$_POST['price'];
 
     // Handle image upload
-    $target_dir = "uploads/";
-    $target_file = $target_dir . basename($_FILES["img"]["name"]);
     $uploadOk = 1;
-    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+    $img = "";
+    if (isset($_FILES["img"]) && $_FILES["img"]["error"] == 0) {
+        $target_dir = "uploads/";
+        $target_file = $target_dir . basename($_FILES["img"]["name"]);
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-    // Check if image file is an actual image or fake image
-    $check = getimagesize($_FILES["img"]["tmp_name"]);
-    if ($check !== false) {
-        $uploadOk = 1;
-    } else {
-        $message = "File is not an image.";
-        $uploadOk = 0;
-    }
-
-    // Check if file already exists
-    if (file_exists($target_file)) {
-        $message = "Sorry, file already exists.";
-        $uploadOk = 0;
-    }
-
-    // Check file size
-    if ($_FILES["img"]["size"] > 500000) { // 500KB
-        $message = "Sorry, your file is too large.";
-        $uploadOk = 0;
-    }
-
-    // Allow certain file formats
-    if (
-        $imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-        && $imageFileType != "gif"
-    ) {
-        $message = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-        $uploadOk = 0;
-    }
-
-    // Check if $uploadOk is set to 0 by an error
-    if ($uploadOk == 0) {
-        $message = "Sorry, your file was not uploaded.";
-        // if everything is ok, try to upload file
-    } else {
-        if (move_uploaded_file($_FILES["img"]["tmp_name"], $target_file)) {
-            $img = $target_file;
-
-            $sql = "INSERT INTO product (name, quantity, description, img, price) VALUES ('$name', '$quantity', '$description', '$img', '$price')";
-
-            if ($mysqli->query($sql) === TRUE) {
-                $message = "Product added successfully";
-            } else {
-                $message = "Error: " . $sql . "<br>" . $mysqli->error;
-            }
+        // Check if file is an image
+        $check = getimagesize($_FILES["img"]["tmp_name"]);
+        if ($check !== false) {
+            $uploadOk = 1;
         } else {
-            $message = "Sorry, there was an error uploading your file.";
+            $message = "File is not an image.";
+            $uploadOk = 0;
+        }
+
+        // Check if file already exists
+        if (file_exists($target_file)) {
+            $message = "Sorry, file already exists.";
+            $uploadOk = 0;
+        }
+
+        // Check file size
+        if ($_FILES["img"]["size"] > 5000000) { // 5MB
+            $message = "Sorry, your file is too large.";
+            $uploadOk = 0;
+        }
+
+        // Allow certain file formats
+        if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+            $message = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+            $uploadOk = 0;
+        }
+
+        // Check if $uploadOk is set to 0 by an error
+        if ($uploadOk == 0) {
+            $message = "Sorry, your file was not uploaded.";
+        } else {
+            if (move_uploaded_file($_FILES["img"]["tmp_name"], $target_file)) {
+                $img = $target_file;
+            } else {
+                $message = "Sorry, there was an error uploading your file.";
+            }
+        }
+    }
+
+    if ($uploadOk == 1 && !empty($img)) {
+        $sql = "INSERT INTO product (name, quantity, description, img, price) VALUES ('$name', '$quantity', '$description', '$img', '$price')";
+
+        if ($mysqli->query($sql) === TRUE) {
+            $message = "Product added successfully";
+        } else {
+            $message = "Error: " . $sql . "<br>" . $mysqli->error;
         }
     }
 }
