@@ -30,7 +30,6 @@ if ($role !== 'admin') {
             <a href="admin.php" class="text-xl font-bold flex items-center hover:text-blue-400 transition duration-200">
                 Admin Dashboard
             </a>
-            <a href="productAdd.php" class="hover:text-blue-400 transition duration-200 text-lg">Přidání produktu</a>
         </div>
         <div class="flex items-center space-x-4">
             <?php if ($user) : ?>
