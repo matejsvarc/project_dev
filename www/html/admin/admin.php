@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <a href="editProducts.php" class="text-xl font-bold">Editing Products</a>
             </div>
             <div class="col-span-2 border p-4 rounded-lg text-center">
-                <a href="overview.php" class="text-xl font-bold">Overview/Popularity</a>
+                <a href="productOverview.php" class="text-xl font-bold">Overview/Popularity</a>
             </div>
         </div>
     </div>
