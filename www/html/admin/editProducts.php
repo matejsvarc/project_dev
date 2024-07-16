@@ -61,19 +61,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteSelected'])) {
     }
 }
 
+// Handle search and sorting
+$search_query = isset($_GET['search']) ? $mysqli->real_escape_string($_GET['search']) : '';
+$sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'name';
+$order = isset($_GET['order']) ? $_GET['order'] : 'ASC';
+
+$sort_columns = ['name', 'date_added', 'quantity'];
+$order = $order === 'DESC' ? 'DESC' : 'ASC';
+
+if (!in_array($sort_by, $sort_columns)) {
+    $sort_by = 'name';
+}
+
+$search_sql = $search_query ? "WHERE name LIKE '%$search_query%'" : '';
+
 // Pagination settings
 $items_per_page = 25;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $items_per_page;
 
 // Get total number of products
-$total_result = $mysqli->query("SELECT COUNT(*) AS count FROM product");
+$total_result = $mysqli->query("SELECT COUNT(*) AS count FROM product $search_sql");
 $total_row = $total_result->fetch_assoc();
 $total_items = $total_row['count'];
 $total_pages = ceil($total_items / $items_per_page);
 
 // Get products for the current page
-$result = $mysqli->query("SELECT * FROM product LIMIT $offset, $items_per_page");
+$result = $mysqli->query("SELECT * FROM product $search_sql ORDER BY $sort_by $order LIMIT $offset, $items_per_page");
 ?>
 
 <!DOCTYPE html>
@@ -96,68 +110,77 @@ $result = $mysqli->query("SELECT * FROM product LIMIT $offset, $items_per_page")
             </div>
         <?php endif; ?>
         <div class="overflow-x-auto">
-            <form id="batchDeleteForm" action="editProducts.php" method="post">
-                <table class="min-w-full bg-white border border-gray-200">
-                    <thead class="bg-gray-800 text-white">
-                        <tr>
-                            <th class="py-2 px-4 text-center">
-                                <input type="checkbox" id="selectAll">
-                            </th>
-                            <th class="py-2 px-4 text-center">ID</th>
-                            <th class="py-2 px-4 text-center">Name</th>
-                            <th class="py-2 px-4 text-center">Quantity</th>
-                            <th class="py-2 px-4 text-center">Description</th>
-                            <th class="py-2 px-4 text-center">Price</th>
-                            <th class="py-2 px-4 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php while ($row = $result->fetch_assoc()) : ?>
-                            <tr>
-                                <td class="py-2 px-4 text-center">
-                                    <input type="checkbox" name="ids[]" value="<?php echo htmlspecialchars($row['id']); ?>" class="selectItem">
-                                </td>
-                                <td class="py-2 px-4 text-center"><?php echo htmlspecialchars($row['id']); ?></td>
-                                <td class="py-2 px-4 text-center"><?php echo htmlspecialchars($row['name']); ?></td>
-                                <td class="py-2 px-4 text-center"><?php echo htmlspecialchars($row['quantity']); ?></td>
-                                <td class="py-2 px-4 text-center"><?php echo htmlspecialchars($row['description']); ?></td>
-                                <td class="py-2 px-4 text-center"><?php echo htmlspecialchars($row['price']); ?></td>
-                                <td class="py-2 px-4 text-center">
-                                    <form action="editProducts.php" method="post" class="inline">
-                                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($row['id']); ?>">
-                                        <input type="text" name="name" value="<?php echo htmlspecialchars($row['name']); ?>" required class="mt-1 p-2 w-full border rounded-md">
-                                        <input type="number" name="quantity" value="<?php echo htmlspecialchars($row['quantity']); ?>" required class="mt-1 p-2 w-full border rounded-md">
-                                        <textarea name="description" required class="mt-1 p-2 w-full border rounded-md"><?php echo htmlspecialchars($row['description']); ?></textarea>
-                                        <input type="number" name="price" value="<?php echo htmlspecialchars($row['price']); ?>" required class="mt-1 p-2 w-full border rounded-md">
-                                        <button type="submit" name="updateProduct" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded mt-2">Update</button>
-                                    </form>
-                                    <form action="editProducts.php" method="post" class="inline">
-                                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($row['id']); ?>">
-                                        <button type="submit" name="deleteProduct" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded mt-2">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
-                <button type="submit" name="deleteSelected" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">Delete Selected</button>
+            <form id="searchForm" action="editProducts.php" method="get" class="mb-4">
+                <div class="flex items-center mb-4">
+                    <input type="text" name="search" placeholder="Search products..." value="<?php echo htmlspecialchars($search_query); ?>" class="p-2 border rounded mr-2">
+                    <select name="sort_by" class="p-2 border rounded mr-2">
+                        <option value="name" <?php echo $sort_by === 'name' ? 'selected' : ''; ?>>Sort by Name</option>
+                        <option value="quantity" <?php echo $sort_by === 'quantity' ? 'selected' : ''; ?>>Sort by Quantity</option>
+                    </select>
+                    <select name="order" class="p-2 border rounded mr-2">
+                        <option value="ASC" <?php echo $order === 'ASC' ? 'selected' : ''; ?>>Ascending</option>
+                        <option value="DESC" <?php echo $order === 'DESC' ? 'selected' : ''; ?>>Descending</option>
+                    </select>
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Search</button>
+                </div>
             </form>
-            <div class="mt-4">
-                <?php if ($page > 1) : ?>
-                    <a href="editProducts.php?page=<?php echo $page - 1; ?>" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l">Previous</a>
-                <?php endif; ?>
-                <?php if ($page < $total_pages) : ?>
-                    <a href="editProducts.php?page=<?php echo $page + 1; ?>" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r">Next</a>
-                <?php endif; ?>
-            </div>
+            <form id="batchDeleteForm" action="editProducts.php" method="post">
+                <div class="flex items-center mb-4">
+                    <input type="checkbox" id="selectAll" class="mr-2">
+                    <label for="selectAll">Select All</label>
+                </div>
+                <button type="submit" name="deleteSelected" class="relative bottom-5 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">Delete Selected</button>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <?php while ($row = $result->fetch_assoc()) : ?>
+                        <div class="bg-white border border-gray-200 p-4 rounded-md">
+                            <input type="checkbox" name="ids[]" value="<?php echo htmlspecialchars($row['id']); ?>" class="selectItem mb-2">
+                            <form action="editProducts.php" method="post">
+                                <input type="hidden" name="id" value="<?php echo htmlspecialchars($row['id']); ?>">
+                                <div class="mb-2">
+                                    <label for="name_<?php echo $row['id']; ?>" class="block text-gray-700">Name</label>
+                                    <input type="text" id="name_<?php echo $row['id']; ?>" name="name" value="<?php echo htmlspecialchars($row['name']); ?>" required class="mt-1 p-1 w-full border rounded-md">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="quantity_<?php echo $row['id']; ?>" class="block text-gray-700">Quantity</label>
+                                    <input type="number" id="quantity_<?php echo $row['id']; ?>" name="quantity" value="<?php echo htmlspecialchars($row['quantity']); ?>" required class="mt-1 p-1 w-full border rounded-md">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="description_<?php echo $row['id']; ?>" class="block text-gray-700">Description</label>
+                                    <textarea id="description_<?php echo $row['id']; ?>" name="description" required class="mt-1 p-1 w-full border rounded-md"><?php echo htmlspecialchars($row['description']); ?></textarea>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="price_<?php echo $row['id']; ?>" class="block text-gray-700">Price</label>
+                                    <input type="number" id="price_<?php echo $row['id']; ?>" name="price" value="<?php echo htmlspecialchars($row['price']); ?>" required class="mt-1 p-1 w-full border rounded-md">
+                                </div>
+                                <button type="submit" name="updateProduct" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded mt-2">Update</button>
+                            </form>
+                            <form action="editProducts.php" method="post" class="mt-2">
+                                <input type="hidden" name="id" value="<?php echo htmlspecialchars($row['id']); ?>">
+                                <button type="submit" name="deleteProduct" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded">Delete</button>
+                            </form>
+                        </div>
+                    <?php endwhile; ?>
+                </div>
+            </form>
+        </div>
+        <div class="mt-4">
+            <nav class="inline-flex">
+                <?php for ($i = 1; $i <= $total_pages; $i++) : ?>
+                    <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($search_query); ?>&sort_by=<?php echo urlencode($sort_by); ?>&order=<?php echo urlencode($order); ?>" class="px-4 py-2 mx-1 border <?php echo $i === $page ? 'bg-blue-500 text-white' : 'bg-white'; ?>">
+                        <?php echo $i; ?>
+                    </a>
+                <?php endfor; ?>
+            </nav>
         </div>
     </div>
+
     <script>
-        document.getElementById('selectAll').addEventListener('click', function(event) {
-            let checkboxes = document.querySelectorAll('.selectItem');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = event.target.checked;
-            });
+        document.getElementById('selectAll').addEventListener('click', function() {
+            var checkboxes = document.querySelectorAll('.selectItem');
+            for (var checkbox of checkboxes) {
+                checkbox.checked = this.checked;
+            }
         });
     </script>
 </body>

@@ -18,65 +18,66 @@ require 'adminNavbar.php';
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $mysqli->real_escape_string($_POST['name']);
-    $quantity = (int)$_POST['quantity'];
-    $description = $mysqli->real_escape_string($_POST['description']);
-    $price = (int)$_POST['price'];
+    foreach ($_POST['products'] as $index => $product) {
+        $name = $mysqli->real_escape_string($product['name']);
+        $quantity = (int)$product['quantity'];
+        $description = $mysqli->real_escape_string($product['description']);
+        $price = (int)$product['price'];
 
-    // Handle image upload
-    $uploadOk = 1;
-    $img = "";
-    if (isset($_FILES["img"]) && $_FILES["img"]["error"] == 0) {
-        $target_dir = "uploads/";
-        $target_file = $target_dir . basename($_FILES["img"]["name"]);
-        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        // Handle image upload
+        $img = "";
+        if (isset($_FILES["img"]) && $_FILES["img"]["error"][$index] == 0) {
+            $target_dir = "uploads/";
+            $target_file = $target_dir . basename($_FILES["img"]["name"][$index]);
+            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-        // Check if file is an image
-        $check = getimagesize($_FILES["img"]["tmp_name"]);
-        if ($check !== false) {
-            $uploadOk = 1;
-        } else {
-            $message = "File is not an image.";
-            $uploadOk = 0;
-        }
-
-        // Check if file already exists
-        if (file_exists($target_file)) {
-            $message = "Sorry, file already exists.";
-            $uploadOk = 0;
-        }
-
-        // Check file size
-        if ($_FILES["img"]["size"] > 5000000) { // 5MB
-            $message = "Sorry, your file is too large.";
-            $uploadOk = 0;
-        }
-
-        // Allow certain file formats
-        if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-            $message = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-            $uploadOk = 0;
-        }
-
-        // Check if $uploadOk is set to 0 by an error
-        if ($uploadOk == 0) {
-            $message = "Sorry, your file was not uploaded.";
-        } else {
-            if (move_uploaded_file($_FILES["img"]["tmp_name"], $target_file)) {
-                $img = $target_file;
+            // Check if file is an image
+            $check = getimagesize($_FILES["img"]["tmp_name"][$index]);
+            if ($check !== false) {
+                $uploadOk = 1;
             } else {
-                $message = "Sorry, there was an error uploading your file.";
+                $message = "File is not an image.";
+                $uploadOk = 0;
+            }
+
+            // Check if file already exists
+            if (file_exists($target_file)) {
+                $message = "Sorry, file already exists.";
+                $uploadOk = 0;
+            }
+
+            // Check file size
+            if ($_FILES["img"]["size"][$index] > 5000000) { // 5MB
+                $message = "Sorry, your file is too large.";
+                $uploadOk = 0;
+            }
+
+            // Allow certain file formats
+            if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+                $message = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+                $uploadOk = 0;
+            }
+
+            // Check if $uploadOk is set to 0 by an error
+            if ($uploadOk == 0) {
+                $message = "Sorry, your file was not uploaded.";
+            } else {
+                if (move_uploaded_file($_FILES["img"]["tmp_name"][$index], $target_file)) {
+                    $img = $target_file;
+                } else {
+                    $message = "Sorry, there was an error uploading your file.";
+                }
             }
         }
-    }
 
-    if ($uploadOk == 1 && !empty($img)) {
-        $sql = "INSERT INTO product (name, quantity, description, img, price, popularity) VALUES ('$name', '$quantity', '$description', '$img', '$price', 0)";
+        if (!empty($img)) {
+            $sql = "INSERT INTO product (name, quantity, description, img, price, popularity) VALUES ('$name', '$quantity', '$description', '$img', '$price', 0)";
 
-        if ($mysqli->query($sql) === TRUE) {
-            $message = "Product added successfully";
-        } else {
-            $message = "Error: " . $sql . "<br>" . $mysqli->error;
+            if ($mysqli->query($sql) === TRUE) {
+                $message = "Product added successfully";
+            } else {
+                $message = "Error: " . $sql . "<br>" . $mysqli->error;
+            }
         }
     }
 }
@@ -88,44 +89,82 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/styling.scss">
     <title>Add Product</title>
+    <style>
+        .product-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f9fafb;
+        }
+
+        .product-card input,
+        .product-card textarea,
+        .product-card button {
+            margin-top: 0.5rem;
+        }
+    </style>
 </head>
 
-<body>
-    <div class="container mx-auto mt-10">
-        <h2 class="text-2xl mb-4">Add New Product</h2>
+<body class="bg-gray-100">
+    <div class="container mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
+        <h2 class="text-3xl mb-6 font-semibold text-gray-700">Add New Products</h2>
         <?php if (!empty($message)) : ?>
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
                 <?php echo $message; ?>
             </div>
         <?php endif; ?>
-        <form action="productAdd.php" method="post" enctype="multipart/form-data" class="grid grid-cols-1 gap-4 md:grid-cols-5">
-            <div class="col-span-1">
-                <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
-                <input type="text" name="name" id="name" required class="mt-1 p-2 w-full border rounded-md">
+        <form action="productAdd.php" method="post" enctype="multipart/form-data" id="productForm">
+            <div id="productContainer">
+                <div class="product-card">
+                    <h3 class="text-xl font-medium text-gray-600">Product 1</h3>
+                    <label class="block text-sm font-medium text-gray-700">Product Name</label>
+                    <input type="text" name="products[0][name]" required class="mt-1 p-2 w-full border rounded-md">
+                    <label class="block text-sm font-medium text-gray-700">Quantity</label>
+                    <input type="number" name="products[0][quantity]" required class="mt-1 p-2 w-full border rounded-md">
+                    <label class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea name="products[0][description]" required class="mt-1 p-2 w-full border rounded-md"></textarea>
+                    <label class="block text-sm font-medium text-gray-700">Image</label>
+                    <input type="file" name="img[0]" required class="mt-1 p-2 w-full border rounded-md">
+                    <label class="block text-sm font-medium text-gray-700">Price</label>
+                    <input type="number" name="products[0][price]" required class="mt-1 p-2 w-full border rounded-md">
+                </div>
             </div>
-            <div class="col-span-1">
-                <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
-                <input type="number" name="quantity" id="quantity" required class="mt-1 p-2 w-full border rounded-md">
+            <div class="flex justify-end mb-4">
+                <button type="button" id="addProduct" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200">Add Another Product</button>
             </div>
-            <div class="col-span-1">
-                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                <textarea name="description" id="description" required class="mt-1 p-2 w-full border rounded-md"></textarea>
-            </div>
-            <div class="col-span-1">
-                <label for="img" class="block text-sm font-medium text-gray-700">Image</label>
-                <input type="file" name="img" id="img" required class="mt-1 p-2 w-full border rounded-md">
-            </div>
-            <div class="col-span-1">
-                <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
-                <input type="number" name="price" id="price" required class="mt-1 p-2 w-full border rounded-md">
-            </div>
-            <div class="col-span-1 md:col-span-5 flex justify-end mt-4 md:mt-0">
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200">Add Product</button>
+            <div class="flex justify-end">
+                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-200">Submit All Products</button>
             </div>
         </form>
     </div>
+
+    <script>
+        document.getElementById('addProduct').addEventListener('click', function() {
+            let productIndex = document.querySelectorAll('.product-card').length;
+            let productContainer = document.getElementById('productContainer');
+
+            let newProduct = document.createElement('div');
+            newProduct.classList.add('product-card');
+
+            newProduct.innerHTML = `
+                <h3 class="text-xl font-medium text-gray-600">Product ${productIndex + 1}</h3>
+                <label class="block text-sm font-medium text-gray-700">Product Name</label>
+                <input type="text" name="products[${productIndex}][name]" required class="mt-1 p-2 w-full border rounded-md">
+                <label class="block text-sm font-medium text-gray-700">Quantity</label>
+                <input type="number" name="products[${productIndex}][quantity]" required class="mt-1 p-2 w-full border rounded-md">
+                <label class="block text-sm font-medium text-gray-700">Description</label>
+                <textarea name="products[${productIndex}][description]" required class="mt-1 p-2 w-full border rounded-md"></textarea>
+                <label class="block text-sm font-medium text-gray-700">Image</label>
+                <input type="file" name="img[${productIndex}]" required class="mt-1 p-2 w-full border rounded-md">
+                <label class="block text-sm font-medium text-gray-700">Price</label>
+                <input type="number" name="products[${productIndex}][price]" required class="mt-1 p-2 w-full border rounded-md">
+            `;
+
+            productContainer.appendChild(newProduct);
+        });
+    </script>
 </body>
 
 </html>
