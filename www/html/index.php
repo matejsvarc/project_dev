@@ -2,9 +2,9 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
 require '/var/www/include/database.php'; // Use absolute path
 require 'navbar.php';
-require 'productList.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +18,9 @@ require 'productList.php';
 </head>
 
 <body>
-
+    <div class="container mx-auto mt-10">
+        <?php require 'productList.php'; ?>
+    </div>
 </body>
 
 </html>
