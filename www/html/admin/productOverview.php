@@ -58,7 +58,7 @@ $result = $stmt->get_result();
                 while ($row = $result->fetch_assoc()) {
                     echo '<div class="border p-4 rounded-lg">';
                     echo '<h3 class="text-xl font-bold mb-2">' . htmlspecialchars($row['name']) . '</h3>';
-                    echo '<img src="../' . htmlspecialchars($row['img']) . '" alt="' . htmlspecialchars($row['name']) . '" class="mb-2">';
+                    echo '<img src="uploads/' . htmlspecialchars($row['img']) . '" alt="' . htmlspecialchars($row['name']) . '" class="mb-2">';
                     echo '<p class="mb-2">' . htmlspecialchars($row['description']) . '</p>';
                     echo '<p class="mb-2">Quantity: ' . htmlspecialchars($row['quantity']) . '</p>';
                     echo '<p class="mb-2">Popularity: ' . htmlspecialchars($row['popularity']) . '</p>';

@@ -2,11 +2,9 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
 require '/var/www/include/database.php'; // Use absolute path
 require 'navbar.php';
-$sql = "SELECT * FROM product";
-$result = $mysqli->query($sql);
+require 'productList.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,27 +18,7 @@ $result = $mysqli->query($sql);
 </head>
 
 <body>
-    <div class="container mx-auto mt-10">
-        <h2 class="text-2xl mb-4">Product List</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <?php
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo '<div class="border p-4 rounded-lg">';
-                    echo '<h3 class="text-xl font-bold mb-2">' . htmlspecialchars($row['name']) . '</h3>';
-                    echo '<a href="admin/productOverview.php?id=' . htmlspecialchars($row['id']) . '">';
-                    echo '<img src="admin/' . htmlspecialchars($row['img']) . '" alt="' . htmlspecialchars($row['name']) . '" class="mb-2">';
-                    echo '</a>';
-                    echo '<p class="mb-2">' . htmlspecialchars($row['description']) . '</p>';
-                    echo '<p class="font-bold">$' . htmlspecialchars($row['price']) . '</p>';
-                    echo '</div>';
-                }
-            } else {
-                echo '<p>No products found.</p>';
-            }
-            ?>
-        </div>
-    </div>
+
 </body>
 
 </html>
