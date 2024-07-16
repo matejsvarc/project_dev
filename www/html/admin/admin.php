@@ -56,20 +56,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #f3f4f6;
+        }
+
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 
 <body>
     <div class="container mx-auto mt-10">
-        <h2 class="text-2xl mb-4">Admin Dashboard</h2>
-        <div class="grid grid-cols-2 gap-4">
-            <div class="border p-4 rounded-lg text-center">
-                <a href="productAdd.php" class="text-xl font-bold">Adding Product</a>
+        <div class="text-center mb-8">
+            <h2 class="text-4xl font-bold text-gray-800">Admin Dashboard</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="card bg-white p-6 rounded-lg shadow-lg text-center">
+                <a href="productAdd.php" class="text-2xl font-semibold text-gray-700 hover:text-blue-600">
+                    <i class="fas fa-plus-circle"></i> Add Product
+                </a>
             </div>
-            <div class="border p-4 rounded-lg text-center">
-                <a href="editProducts.php" class="text-xl font-bold">Editing Products</a>
+            <div class="card bg-white p-6 rounded-lg shadow-lg text-center">
+                <a href="editProducts.php" class="text-2xl font-semibold text-gray-700 hover:text-blue-600">
+                    <i class="fas fa-edit"></i> Edit Products
+                </a>
             </div>
-            <div class="col-span-2 border p-4 rounded-lg text-center">
-                <a href="productOverview.php" class="text-xl font-bold">Overview/Popularity</a>
+            <div class="card bg-white p-6 rounded-lg shadow-lg text-center col-span-1 md:col-span-3">
+                <a href="productOverview.php" class="text-2xl font-semibold text-gray-700 hover:text-blue-600">
+                    <i class="fas fa-chart-line"></i> Overview/Popularity
+                </a>
             </div>
         </div>
     </div>

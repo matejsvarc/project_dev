@@ -40,21 +40,51 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/styling.scss">
     <title><?php echo htmlspecialchars($product['name']); ?></title>
+    <style>
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .admin-controls button {
+            margin-left: 5px;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container mx-auto mt-10">
-        <div class="flex flex-col md:flex-row">
+        <div class="flex flex-col md:flex-row bg-white p-6 rounded-lg shadow-lg">
             <div class="md:w-1/2">
-                <img src="admin/<?php echo htmlspecialchars($product['img']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="w-full">
+                <img src="admin/<?php echo htmlspecialchars($product['img']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="w-full rounded-lg">
             </div>
-            <div class="md:w-1/2 md:pl-10">
+            <div class="md:w-1/2 md:pl-10 mt-4 md:mt-0">
                 <h2 class="text-3xl font-bold mb-4"><?php echo htmlspecialchars($product['name']); ?></h2>
                 <p class="mb-4"><?php echo htmlspecialchars($product['description']); ?></p>
                 <p class="text-2xl font-bold text-gray-800 mb-4">$<?php echo htmlspecialchars($product['price']); ?></p>
                 <?php if ($is_admin) : ?>
                     <p class="text-sm text-gray-600">Popularity: <?php echo htmlspecialchars($product['popularity']); ?></p>
+                    <div class="admin-controls mt-4">
+                        <a href="admin/editProducts.php?id=<?php echo htmlspecialchars($product['id']); ?>" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">Edit</a>
+                        <form method="post" action="deleteProduct.php">
+                            <input type="hidden" name="id" value="<?php echo htmlspecialchars($product['id']); ?>">
+                            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
+                        </form>
+                    </div>
                 <?php endif; ?>
+                <div class="mt-6">
+                    <a href="index.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back to Products</a>
+                </div>
             </div>
         </div>
     </div>
