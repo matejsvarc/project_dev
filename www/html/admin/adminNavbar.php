@@ -33,7 +33,7 @@ if ($role !== 'admin') {
         </div>
         <div class="flex items-center space-x-4">
             <?php if ($user) : ?>
-                <span class="mr-4">Vítejte, <?php echo htmlspecialchars($user); ?></span>
+                <span class="mr-1">Vítejte, <?php echo htmlspecialchars($user); ?></span>
                 <a href="../index.php" class="bg-blue-500 text-white font-bold px-4 py-2 rounded-full transition duration-200 ease-in-out hover:bg-blue-800 active:bg-blue-900 focus:outline-none">Zpět</a>
                 <a href="../accManagment/outAcc.php">
                     <button class="bg-blue-500 text-white font-bold px-4 py-2 rounded-full transition duration-200 ease-in-out hover:bg-blue-800 active:bg-blue-900 focus:outline-none">

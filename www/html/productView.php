@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require '/var/www/include/database.php'; // Use absolute path
 require 'navbar.php';
+
 if (isset($_GET['id'])) {
     $product_id = intval($_GET['id']);
 
@@ -26,6 +27,9 @@ if (isset($_GET['id'])) {
     echo "Invalid product ID.";
     exit;
 }
+
+// Check if the user is logged in and is an admin
+$is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +52,9 @@ if (isset($_GET['id'])) {
                 <h2 class="text-3xl font-bold mb-4"><?php echo htmlspecialchars($product['name']); ?></h2>
                 <p class="mb-4"><?php echo htmlspecialchars($product['description']); ?></p>
                 <p class="text-2xl font-bold text-gray-800 mb-4">$<?php echo htmlspecialchars($product['price']); ?></p>
-                <p class="text-sm text-gray-600">Popularity: <?php echo htmlspecialchars($product['popularity']); ?></p>
+                <?php if ($is_admin) : ?>
+                    <p class="text-sm text-gray-600">Popularity: <?php echo htmlspecialchars($product['popularity']); ?></p>
+                <?php endif; ?>
             </div>
         </div>
     </div>

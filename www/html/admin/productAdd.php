@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $name = $mysqli->real_escape_string($product['name']);
         $quantity = (int)$product['quantity'];
         $description = $mysqli->real_escape_string($product['description']);
-        $price = (int)$product['price'];
+        $price = isset($product['price']) ? floatval($product['price']) : 0.0; // Convert to float
 
         // Handle image upload
         $img = "";
@@ -71,7 +71,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         if (!empty($img)) {
-            $sql = "INSERT INTO product (name, quantity, description, img, price, popularity) VALUES ('$name', '$quantity', '$description', '$img', '$price', 0)";
+            $sql = "INSERT INTO product (name, quantity, description, img, price, popularity) 
+                    VALUES ('$name', '$quantity', '$description', '$img', '$price', 0)";
 
             if ($mysqli->query($sql) === TRUE) {
                 $message = "Product added successfully";
