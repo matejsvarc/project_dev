@@ -25,7 +25,8 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/styling.scss">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
     <title>Product Overview</title>
     <style>
         .card {
@@ -77,17 +78,18 @@ $result = $stmt->get_result();
                 while ($row = $result->fetch_assoc()) {
                     echo '<div class="card bg-white p-6 rounded-lg shadow-lg">';
                     echo '<h3 class="text-xl font-bold mb-2">' . htmlspecialchars($row['name']) . '</h3>';
-                    echo '<img src="uploads/' . htmlspecialchars($row['img']) . '" alt="' . htmlspecialchars($row['name']) . '" class="mb-2 rounded-lg">';
-                    echo '<p class="mb-2 text-gray-700">' . htmlspecialchars($row['description']) . '</p>';
+                    // Adjusted image path
+                    echo '<img src="' . htmlspecialchars($row['img']) . '" alt="' . htmlspecialchars($row['name']) . '" class="mb-2 w-full h-80 object-cover rounded-lg">';
+                    echo '<p class="mb-2 text-gray-700 truncate">' . htmlspecialchars($row['description']) . '</p>';
                     echo '<p class="mb-2 text-gray-600">Quantity: ' . htmlspecialchars($row['quantity']) . '</p>';
                     echo '<p class="mb-2 text-gray-600">Popularity: ' . htmlspecialchars($row['popularity']) . '</p>';
                     echo '<p class="font-bold text-lg text-gray-800">$' . htmlspecialchars($row['price']) . '</p>';
                     echo '<div class="flex justify-between items-center mt-4">';
                     echo '<a href="../productView.php?id=' . htmlspecialchars($row['id']) . '" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">View Details</a>';
                     if ($_SESSION['role'] === 'admin') {
-                        echo '<div class="admin-controls">';
-                        echo '<a href="editProduct.php?id=' . htmlspecialchars($row['id']) . '" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">Edit</a>';
-                        echo '<form method="post" action="deleteProduct.php">';
+                        echo '<div class="admin-controls flex space-x-2">';
+                        echo '<a href="editProducts.php?id=' . htmlspecialchars($row['id']) . '" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">Edit</a>';
+                        echo '<form method="post" action="deleteProduct.php" class="inline">';
                         echo '<input type="hidden" name="id" value="' . htmlspecialchars($row['id']) . '">';
                         echo '<button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>';
                         echo '</form>';
@@ -99,6 +101,7 @@ $result = $stmt->get_result();
             } else {
                 echo '<p class="text-center text-gray-700">No products found.</p>';
             }
+
             ?>
         </div>
     </div>

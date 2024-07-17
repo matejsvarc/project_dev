@@ -66,9 +66,13 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <div class="container mx-auto mt-10">
         <div class="flex flex-col md:flex-row bg-white p-6 rounded-lg shadow-lg">
             <div class="md:w-1/2">
-                <img src="admin/<?php echo htmlspecialchars($product['img']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="w-full rounded-lg">
+                <img src="admin/<?php echo htmlspecialchars($product['img']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="w-3/4 h-3/4 rounded-lg">
+
             </div>
             <div class="md:w-1/2 md:pl-10 mt-4 md:mt-0">
+                <div class="mt-6">
+                    <a href="index.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded relative bottom-3 ">Back to Products</a>
+                </div>
                 <h2 class="text-3xl font-bold mb-4"><?php echo htmlspecialchars($product['name']); ?></h2>
                 <p class="mb-4"><?php echo htmlspecialchars($product['description']); ?></p>
                 <p class="text-2xl font-bold text-gray-800 mb-4">$<?php echo htmlspecialchars($product['price']); ?></p>
@@ -82,9 +86,6 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                         </form>
                     </div>
                 <?php endif; ?>
-                <div class="mt-6">
-                    <a href="index.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back to Products</a>
-                </div>
             </div>
         </div>
     </div>

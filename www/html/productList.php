@@ -61,7 +61,7 @@ $result = $stmt->get_result();
                             <a href="productView.php?id=<?= htmlspecialchars($row['id']) ?>">
                                 <h3 class="text-xl font-bold mb-2"><?= htmlspecialchars($row['name']) ?></h3>
                                 <img src="admin/<?= htmlspecialchars($row['img']) ?>" alt="<?= htmlspecialchars($row['name']) ?>" class="mb-2 w-full h-80 object-cover rounded-lg">
-                                <p class="mb-2 text-gray-700"><?= htmlspecialchars($row['description']) ?></p>
+                                <p class="mb-2 text-gray-700 truncate"><?= htmlspecialchars($row['description']) ?></p>
                                 <p class="font-bold text-gray-900">$<?= htmlspecialchars($row['price']) ?></p>
                             </a>
                         </div>
