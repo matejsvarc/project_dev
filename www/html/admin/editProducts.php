@@ -131,9 +131,9 @@ $result = $mysqli->query("SELECT * FROM product $search_sql ORDER BY $sort_by $o
                 </div>
                 <button type="submit" name="deleteSelected" class="relative bottom-5 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">Delete Selected</button>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <?php while ($row = $result->fetch_assoc()) : ?>
-                        <div class="bg-white border border-gray-200 p-4 rounded-md">
+                        <div class="bg-white border border-gray-200 p-2 rounded-md">
                             <input type="checkbox" name="ids[]" value="<?php echo htmlspecialchars($row['id']); ?>" class="selectItem mb-2">
                             <form action="editProducts.php" method="post">
                                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($row['id']); ?>">
@@ -153,18 +153,17 @@ $result = $mysqli->query("SELECT * FROM product $search_sql ORDER BY $sort_by $o
                                     <label for="price_<?php echo $row['id']; ?>" class="block text-gray-700">Price</label>
                                     <input type="number" id="price_<?php echo $row['id']; ?>" name="price" value="<?php echo htmlspecialchars($row['price']); ?>" required class="mt-1 p-1 w-full border rounded-md">
                                 </div>
-                                <button type="submit" name="updateProduct" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded mt-2">Update</button>
-                            </form>
-                            <form action="editProducts.php" method="post" class="mt-2">
-                                <input type="hidden" name="id" value="<?php echo htmlspecialchars($row['id']); ?>">
-                                <button type="submit" name="deleteProduct" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded">Delete</button>
+                                <div class="flex justify-center mt-2">
+                                    <button type="submit" name="updateProduct" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded mr-2">Update</button>
+                                    <button type="submit" name="deleteProduct" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded">Delete</button>
+                                </div>
                             </form>
                         </div>
                     <?php endwhile; ?>
                 </div>
             </form>
         </div>
-        <div class="mt-4">
+        <div class="mt-4 flex justify-center">
             <nav class="inline-flex">
                 <?php for ($i = 1; $i <= $total_pages; $i++) : ?>
                     <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($search_query); ?>&sort_by=<?php echo urlencode($sort_by); ?>&order=<?php echo urlencode($order); ?>" class="px-4 py-2 mx-1 border <?php echo $i === $page ? 'bg-blue-500 text-white' : 'bg-white'; ?>">
