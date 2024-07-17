@@ -17,7 +17,7 @@ $user_id = $_SESSION['id'];
 
 try {
     // Use the $mysqli variable initialized in 'database.php'
-    $stmt = $mysqli->prepare("SELECT id, username, role FROM users");
+    $stmt = $mysqli->prepare("SELECT id, username, email, role FROM users");
     $stmt->execute();
     $result = $stmt->get_result();
     $users = $result->fetch_all(MYSQLI_ASSOC);
@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="text-center mb-8">
             <h2 class="text-4xl font-bold text-gray-800">Admin Dashboard</h2>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div class="card bg-white p-6 rounded-lg shadow-lg text-center">
                 <a href="productAdd.php" class="text-2xl font-semibold text-gray-700 hover:text-blue-600">
                     <i class="fas fa-plus-circle"></i> Add Product
@@ -95,6 +95,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <i class="fas fa-chart-line"></i> Overview/Popularity
                 </a>
             </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Manage Users</h3>
+            <table class="w-full table-auto">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2">Username</th>
+                        <th class="px-4 py-2">Email</th>
+                        <th class="px-4 py-2">Role</th>
+                        <th class="px-4 py-2">Change Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($users as $user) : ?>
+                        <tr>
+                            <td class="border px-4 py-2 text-center"><?= htmlspecialchars($user['username']) ?></td>
+                            <td class="border px-4 py-2 text-center"><?= htmlspecialchars($user['email']) ?></td>
+                            <td class="border px-4 py-2 text-center"><?= htmlspecialchars($user['role']) ?></td>
+                            <td class="border px-4 py-2">
+                                <form method="post" class="flex items-center justify-center">
+                                    <input type="hidden" name="userId" value="<?= htmlspecialchars($user['id']) ?>">
+                                    <select name="newRole" class="border p-2 rounded mr-2">
+                                        <option value="uzivatel" <?= $user['role'] === 'uzivatel' ? 'selected' : '' ?>>uzivatel</option>
+                                        <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>admin</option>
+                                    </select>
+                                    <button type="submit" name="changeRole" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        Change Role
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </body>

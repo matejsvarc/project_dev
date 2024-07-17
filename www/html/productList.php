@@ -5,7 +5,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require '/var/www/include/database.php'; // Use absolute path
 
-
 $sql = "SELECT * FROM product";
 $result = $mysqli->query($sql);
 
@@ -19,21 +18,7 @@ $searchTerm = '%' . $search . '%';
 $stmt->bind_param('s', $searchTerm);
 $stmt->execute();
 $result = $stmt->get_result();
-
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product List</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        /* Optional: Add any additional custom styles here */
-    </style>
-</head>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -68,16 +53,22 @@ $result = $stmt->get_result();
         </form>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
             <?php
-            // Sample PHP code assuming $result is your mysqli result object
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
             ?>
-                    <a href="productView.php?id=<?= htmlspecialchars($row['id']) ?>" class="border p-4 rounded-lg hover:shadow-lg transition duration-300">
-                        <h3 class="text-xl font-bold mb-2"><?= htmlspecialchars($row['name']) ?></h3>
-                        <img src="admin/<?= htmlspecialchars($row['img']) ?>" alt="<?= htmlspecialchars($row['name']) ?>" class="mb-2 w-full h-80 object-cover rounded-lg">
-                        <p class="mb-2 text-gray-700"><?= htmlspecialchars($row['description']) ?></p>
-                        <p class="font-bold text-gray-900">$<?= htmlspecialchars($row['price']) ?></p>
-                    </a>
+                    <div class="border p-4 rounded-lg hover:shadow-lg transition duration-300 flex flex-col justify-between">
+                        <div>
+                            <a href="productView.php?id=<?= htmlspecialchars($row['id']) ?>">
+                                <h3 class="text-xl font-bold mb-2"><?= htmlspecialchars($row['name']) ?></h3>
+                                <img src="admin/<?= htmlspecialchars($row['img']) ?>" alt="<?= htmlspecialchars($row['name']) ?>" class="mb-2 w-full h-80 object-cover rounded-lg">
+                                <p class="mb-2 text-gray-700"><?= htmlspecialchars($row['description']) ?></p>
+                                <p class="font-bold text-gray-900">$<?= htmlspecialchars($row['price']) ?></p>
+                            </a>
+                        </div>
+                        <div class="mt-4">
+                            <a href="test.php"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">Buy</button></a>
+                        </div>
+                    </div>
                 <?php
                 }
             } else {

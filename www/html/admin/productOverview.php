@@ -83,7 +83,7 @@ $result = $stmt->get_result();
                     echo '<p class="mb-2 text-gray-600">Popularity: ' . htmlspecialchars($row['popularity']) . '</p>';
                     echo '<p class="font-bold text-lg text-gray-800">$' . htmlspecialchars($row['price']) . '</p>';
                     echo '<div class="flex justify-between items-center mt-4">';
-                    echo '<a href="productDetail.php?id=' . htmlspecialchars($row['id']) . '" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">View Details</a>';
+                    echo '<a href="../productView.php?id=' . htmlspecialchars($row['id']) . '" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">View Details</a>';
                     if ($_SESSION['role'] === 'admin') {
                         echo '<div class="admin-controls">';
                         echo '<a href="editProduct.php?id=' . htmlspecialchars($row['id']) . '" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">Edit</a>';
