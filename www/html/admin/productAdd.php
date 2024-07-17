@@ -24,6 +24,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $description = $mysqli->real_escape_string($product['description']);
         $price = isset($product['price']) ? floatval($product['price']) : 0.0; // Convert to float
 
+        // Handle tags
+        $tagsArray = json_decode($product['tags'], true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            $tags = $mysqli->real_escape_string(implode(', ', $tagsArray));
+        } else {
+            $tags = '';
+        }
+
         // Handle image upload
         $img = "";
         if (isset($_FILES["img"]) && $_FILES["img"]["error"][$index] == 0) {
@@ -40,21 +48,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $uploadOk = 0;
             }
 
-            // Check if file already exists
-            if (file_exists($target_file)) {
-                $message = "Sorry, file already exists.";
-                $uploadOk = 0;
-            }
-
-            // Check file size
-            if ($_FILES["img"]["size"][$index] > 5000000) { // 5MB
-                $message = "Sorry, your file is too large.";
-                $uploadOk = 0;
-            }
-
             // Allow certain file formats
             if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
                 $message = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+                $uploadOk = 0;
+            }
+
+            // Check if file size is within limit
+            if ($_FILES["img"]["size"][$index] > 5000000) { // 5MB
+                $message = "Sorry, your file is too large.";
                 $uploadOk = 0;
             }
 
@@ -62,27 +64,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($uploadOk == 0) {
                 $message = "Sorry, your file was not uploaded.";
             } else {
-                if (move_uploaded_file($_FILES["img"]["tmp_name"][$index], $target_file)) {
-                    $img = $target_file;
+                if (!file_exists($target_file)) {
+                    if (move_uploaded_file($_FILES["img"]["tmp_name"][$index], $target_file)) {
+                        $img = $target_file;
+                    } else {
+                        $message = "Sorry, there was an error uploading your file.";
+                    }
                 } else {
-                    $message = "Sorry, there was an error uploading your file.";
+                    $img = $target_file;
                 }
             }
         }
 
         if (!empty($img)) {
-            $sql = "INSERT INTO product (name, quantity, description, img, price, popularity) 
-                    VALUES ('$name', '$quantity', '$description', '$img', '$price', 0)";
+            $sql = "INSERT INTO product (name, quantity, description, img, price, tags) VALUES ('$name', $quantity, '$description', '$img', $price, '$tags')";
 
             if ($mysqli->query($sql) === TRUE) {
-                $message = "Product added successfully";
+                $message = "New product(s) added successfully.";
             } else {
                 $message = "Error: " . $sql . "<br>" . $mysqli->error;
             }
         }
     }
 }
+
+$mysqli->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -104,6 +112,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .product-card textarea,
         .product-card button {
             margin-top: 0.5rem;
+        }
+
+        .tag {
+            display: inline-block;
+            background-color: #e0e7ff;
+            color: #3730a3;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
     </style>
 </head>
@@ -130,6 +155,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="file" name="img[0]" required class="mt-1 p-2 w-full border rounded-md">
                     <label class="block text-sm font-medium text-gray-700">Price</label>
                     <input type="number" name="products[0][price]" required class="mt-1 p-2 w-full border rounded-md">
+                    <label class="block text-sm font-medium text-gray-700">Tags (press space to separate)</label>
+                    <div class="tag-container" id="tag-container-0"></div>
+                    <input type="text" id="tag-input-0" class="mt-1 p-2 w-full border rounded-md" placeholder="e.g., electronics, gadgets, new">
+                    <input type="hidden" name="products[0][tags]">
                 </div>
             </div>
             <div class="flex justify-end mb-4">
@@ -161,9 +190,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="file" name="img[${productIndex}]" required class="mt-1 p-2 w-full border rounded-md">
                 <label class="block text-sm font-medium text-gray-700">Price</label>
                 <input type="number" name="products[${productIndex}][price]" required class="mt-1 p-2 w-full border rounded-md">
+                <label class="block text-sm font-medium text-gray-700">Tags (press space to separate)</label>
+                <div class="tag-container" id="tag-container-${productIndex}"></div>
+                <input type="text" id="tag-input-${productIndex}" class="mt-1 p-2 w-full border rounded-md" placeholder="e.g., electronics, gadgets, new">
+                <input type="hidden" name="products[${productIndex}][tags]">
             `;
 
             productContainer.appendChild(newProduct);
+            addTagEventListener(productIndex);
+        });
+
+        function addTagEventListener(index) {
+            const tagInput = document.getElementById(`tag-input-${index}`);
+            const tagContainer = document.getElementById(`tag-container-${index}`);
+            const hiddenInput = document.querySelector(`input[name="products[${index}][tags]"]`);
+            let tags = [];
+
+            tagInput.addEventListener('keyup', function(event) {
+                if (event.key === ' ') {
+                    const tagText = tagInput.value.trim();
+                    if (tagText !== '' && !tags.includes(tagText)) {
+                        tags.push(tagText);
+                        const tagElement = document.createElement('span');
+                        tagElement.classList.add('tag');
+                        tagElement.textContent = tagText;
+                        tagElement.addEventListener('click', function() {
+                            tagContainer.removeChild(tagElement);
+                            tags = tags.filter(tag => tag !== tagText);
+                            hiddenInput.value = JSON.stringify(tags);
+                        });
+                        tagContainer.appendChild(tagElement);
+                        hiddenInput.value = JSON.stringify(tags);
+                    }
+                    tagInput.value = '';
+                }
+            });
+        }
+
+        document.querySelectorAll('.product-card').forEach((card, index) => {
+            addTagEventListener(index);
         });
     </script>
 </body>
