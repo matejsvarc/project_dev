@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         if (!empty($img)) {
-            $sql = "INSERT INTO product (name, quantity, description, img, price, tags) VALUES ('$name', $quantity, '$description', '$img', $price, '$tags')";
+            $sql = "INSERT INTO product (name, quantity, description, img, price, tags, popularity) VALUES ('$name', $quantity, '$description', '$img', $price, '$tags', 0)";
 
             if ($mysqli->query($sql) === TRUE) {
                 $message = "New product(s) added successfully.";
