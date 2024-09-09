@@ -41,7 +41,7 @@ $result = $stmt->get_result();
             <select name="sort" class="border p-2 rounded mb-2 md:mb-0 md:mr-2">
                 <option value="name" <?php echo $sort === 'name' ? 'selected' : ''; ?>>Sort by Name</option>
                 <option value="popularity" <?php echo $sort === 'popularity' ? 'selected' : ''; ?>>Sort by Popularity</option>
-                <option value="quantity" <?php echo $sort === 'quantity' ? 'selected' : ''; ?>>Sort by Quantity</option>
+                <option value="quantity" <?php echo $sort === 'price' ? 'selected' : ''; ?>>Sort by Price</option>
             </select>
 
             <select name="order" class="border p-2 rounded mb-2 md:mb-0 md:mr-2">
